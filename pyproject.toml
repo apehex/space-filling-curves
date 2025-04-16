@@ -8,10 +8,10 @@ authors = [{name="apehex", email="apehex@protonmail.com"}]
 packages = [{include = "densecurves"}]
 
 [tool.poetry.dependencies]
-python = ">=3, <4"
+python = ">=3.8, <4.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "*"
+pytest = ">=8.0"
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]

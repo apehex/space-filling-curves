@@ -1,6 +1,6 @@
 import random
 
-import mlable.spaces.hilbert
+import densecurves.hilbert
 
 # CONSTANTS ####################################################################
 
@@ -37,19 +37,19 @@ MAPPING_8_5 = {
 class TestBinaryEncoding:
     def test_alphabet(self):
         for _ in range(128):
-            assert all(__b in '01' for __b in mlable.spaces.hilbert.encode_binary(random.randint(0, 2 ** 16), width=16))
+            assert all(__b in '01' for __b in densecurves.hilbert.encode_binary(random.randint(0, 2 ** 16), width=16))
 
     def test_width(self):
         for _ in range(128):
             # padded with 0s up to width
-            assert len(mlable.spaces.hilbert.encode_binary(random.randint(0, 2 ** 16), width=16)) == 16
+            assert len(densecurves.hilbert.encode_binary(random.randint(0, 2 ** 16), width=16)) == 16
             # truncated => exact width
-            assert len(mlable.spaces.hilbert.encode_binary(random.randint(2, 2 ** 16), width=1)) == 1
+            assert len(densecurves.hilbert.encode_binary(random.randint(2, 2 ** 16), width=1)) == 1
 
     def test_reciprocity(self):
         for _ in range(128):
             __n = random.randint(0, 2 ** 15)
-            assert int(mlable.spaces.hilbert.encode_binary(__n, width=16), 2) == __n
+            assert int(densecurves.hilbert.encode_binary(__n, width=16), 2) == __n
 
 # SHAPING ######################################################################
 
@@ -60,7 +60,7 @@ class TestAxeTransposition:
             __rank = random.randint(1, 8)
             __dim = 1 << (__order * __rank)
             __number = random.randint(0, __dim - 1)
-            __point = mlable.spaces.hilbert.transpose_axes(__number, order=__order, rank=__rank)
+            __point = densecurves.hilbert.transpose_axes(__number, order=__order, rank=__rank)
             assert len(__point) == __rank
             assert all(0 <= __c < (2 ** __order) for __c in __point)
 
@@ -70,31 +70,31 @@ class TestAxeTransposition:
             __rank = random.randint(1, 8)
             __dim = 1 << (__order * __rank)
             __number = random.randint(0, __dim - 1)
-            __point = mlable.spaces.hilbert.transpose_axes(__number, order=__order, rank=__rank)
-            assert __number == mlable.spaces.hilbert.flatten_axes(__point, order=__order, rank=__rank)
+            __point = densecurves.hilbert.transpose_axes(__number, order=__order, rank=__rank)
+            assert __number == densecurves.hilbert.flatten_axes(__point, order=__order, rank=__rank)
 
     def test_specific_values(self):
-        assert (0b010, 0b111, 0b001, 0b001) == tuple(mlable.spaces.hilbert.transpose_axes(0b010011000111, order=3, rank=4))
-        assert 0b_010_010_101_010_110_110_111_000 == mlable.spaces.hilbert.flatten_axes((0b00101110, 0b11011110, 0b00100010), order=8, rank=3)
+        assert (0b010, 0b111, 0b001, 0b001) == tuple(densecurves.hilbert.transpose_axes(0b010011000111, order=3, rank=4))
+        assert 0b_010_010_101_010_110_110_111_000 == densecurves.hilbert.flatten_axes((0b00101110, 0b11011110, 0b00100010), order=8, rank=3)
 
 # GRAY CODES ###################################################################
 
 class TestGrayCodes:
     def test_all_different(self):
-        __set = set(mlable.spaces.hilbert.encode_gray(__n) for __n in range(256))
+        __set = set(densecurves.hilbert.encode_gray(__n) for __n in range(256))
         assert(__set == set(range(256)))
 
     def test_reciprocity(self):
         for _ in range(128):
             __n = random.randint(0, 2 ** 32)
-            __g = mlable.spaces.hilbert.encode_gray(__n)
-            assert __n == mlable.spaces.hilbert.decode_gray(__g)
+            __g = densecurves.hilbert.encode_gray(__n)
+            assert __n == densecurves.hilbert.decode_gray(__g)
 
     def test_successive_codes_differ_by_a_single_bit(self):
         for _ in range(128):
             __n = random.randint(0, 2 ** 32)
-            __diff = mlable.spaces.hilbert.encode_gray(__n) ^ mlable.spaces.hilbert.encode_gray(__n + 1)
-            __bin = mlable.spaces.hilbert.encode_binary(__diff, width=33)
+            __diff = densecurves.hilbert.encode_gray(__n) ^ densecurves.hilbert.encode_gray(__n + 1)
+            __bin = densecurves.hilbert.encode_binary(__diff, width=33)
             assert sum(int(__b) for __b in __bin) == 1
 
 # OPERATIONS ###################################################################
@@ -105,8 +105,8 @@ class TestCoordinateEntanglement:
             __order = random.randint(1, 8)
             __rank = random.randint(1, 8)
             __point = [random.randint(0, (2 ** __order) - 1) for _ in range(__rank)]
-            __entangled = mlable.spaces.hilbert.entangle(__point, order=__order, rank=__rank)
-            __untangled = mlable.spaces.hilbert.untangle(__point, order=__order, rank=__rank)
+            __entangled = densecurves.hilbert.entangle(__point, order=__order, rank=__rank)
+            __untangled = densecurves.hilbert.untangle(__point, order=__order, rank=__rank)
             # keep the same axes
             assert len(__entangled) == __rank
             assert len(__untangled) == __rank
@@ -119,16 +119,16 @@ class TestCoordinateEntanglement:
             __order = random.randint(1, 8)
             __rank = random.randint(1, 4)
             __point = [random.randint(0, (2 ** __order) - 1) for _ in range(__rank)]
-            __entangled = mlable.spaces.hilbert.entangle(__point, order=__order, rank=__rank)
-            assert tuple(__point) == tuple(mlable.spaces.hilbert.untangle(__entangled, order=__order, rank=__rank))
+            __entangled = densecurves.hilbert.entangle(__point, order=__order, rank=__rank)
+            assert tuple(__point) == tuple(densecurves.hilbert.untangle(__entangled, order=__order, rank=__rank))
 
 # CURVE ########################################################################
 
 class TestHilbertCurve:
     def test_specific_points(self):
         for __d, __p in MAPPING_8_5.items():
-            assert tuple(__p) == tuple(mlable.spaces.hilbert.point(__d, order=8, rank=5))
-            assert __d == mlable.spaces.hilbert.position(__p, order=8, rank=5)
+            assert tuple(__p) == tuple(densecurves.hilbert.point(__d, order=8, rank=5))
+            assert __d == densecurves.hilbert.position(__p, order=8, rank=5)
 
     def test_points_match_reference_data(self):
-        assert CURVE_4_2 == [mlable.spaces.hilbert.point(__d, order=4, rank=2) for __d in range(256)]
+        assert CURVE_4_2 == [densecurves.hilbert.point(__d, order=4, rank=2) for __d in range(256)]
