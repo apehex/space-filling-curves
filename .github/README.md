@@ -38,7 +38,7 @@ import densecurves.hilbert
 Convert a position / distance along the 1D curve to a ND point:
 
 ```python
-densecurve.hilbert.point(position=42, order=4, rank=2)
+densecurves.hilbert.point(position=42, order=4, rank=2)
 # [7, 7]
 ```
 
