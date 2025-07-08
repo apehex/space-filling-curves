@@ -65,7 +65,7 @@ def point(position: int, order: int, rank: int) -> list:
 
 # 2D => 1D #####################################################################
 
-def position(coords: list, order: int, rank: int) -> int:
+def index(coords: list, order: int, rank: int) -> int:
     # entangle the positions back
     __coords = entangle(coords, order=order, rank=rank)
     # flatten the coordinate

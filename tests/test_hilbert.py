@@ -128,7 +128,7 @@ class TestHilbertCurve:
     def test_specific_points(self):
         for __d, __p in MAPPING_8_5.items():
             assert tuple(__p) == tuple(densecurves.hilbert.point(__d, order=8, rank=5))
-            assert __d == densecurves.hilbert.position(__p, order=8, rank=5)
+            assert __d == densecurves.hilbert.index(__p, order=8, rank=5)
 
     def test_points_match_reference_data(self):
         assert CURVE_4_2 == [densecurves.hilbert.point(__d, order=4, rank=2) for __d in range(256)]
