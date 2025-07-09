@@ -13,11 +13,11 @@ def encode_binary(number: int, width: int) -> str:
 
 def transpose_axes(number: int, order: int, rank: int) -> list:
     __bits = encode_binary(number, width=rank * order)
-    return [int(__bits[__i::rank], 2) for __i in range(rank)]
+    return [int(__bits[__i::rank] or '0', 2) for __i in range(rank)]
 
 def flatten_axes(coords: list, order: int, rank: int) -> int:
     __coords = [encode_binary(__c, width=order) for __c in coords]
-    return int(''.join([__y[__i] for __i in range(order) for __y in __coords]), 2)
+    return int(''.join([__y[__i] for __i in range(order) for __y in __coords]) or '0' , 2)
 
 # GRAY CODES ###################################################################
 
