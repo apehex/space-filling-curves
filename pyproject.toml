@@ -1,6 +1,6 @@
 [project]
 name = "densecurves"
-version = "0.1.2"
+version = "0.2.0"
 description = "Simple and efficient implementations of space-filling / Peano / FASS curves."
 license = ".github/LICENSE.md"
 readme = ".github/README.md"
