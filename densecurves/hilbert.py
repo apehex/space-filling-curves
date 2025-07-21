@@ -1,7 +1,5 @@
 """Map a flat dimension with points of rank N, according to the Hilbert curve."""
 
-import functools
-
 import densecurves.binary
 import densecurves.gray
 import densecurves.linear
