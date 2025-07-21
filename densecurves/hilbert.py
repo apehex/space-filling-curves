@@ -2,22 +2,8 @@
 
 import functools
 
+import densecurves.binary
 import densecurves.linear
-
-# BINARY #######################################################################
-
-def encode_binary(number: int, width: int) -> str:
-    return format(number, 'b').zfill(width)[:width] # truncated at width
-
-# SHAPING ######################################################################
-
-def transpose_axes(number: int, order: int, rank: int) -> list:
-    __bits = encode_binary(number, width=rank * order)
-    return [int(__bits[__i::rank] or '0', 2) for __i in range(rank)]
-
-def flatten_axes(coords: list, order: int, rank: int) -> int:
-    __coords = [encode_binary(__c, width=order) for __c in coords]
-    return int(''.join([__y[__i] for __i in range(order) for __y in __coords]) or '0' , 2)
 
 # GRAY CODES ###################################################################
 
@@ -61,7 +47,7 @@ def _point(position: int, order: int, rank: int) -> list:
     # gray encoding H ^ (H/2)
     __gray = encode_gray(position)
     # approximate the curve
-    __coords = transpose_axes(__gray, order=order, rank=rank)
+    __coords = densecurves.binary.interleave(__gray, order=order, rank=rank)
     # Undo excess work
     return untangle(__coords, order=order, rank=rank)
 
@@ -83,7 +69,7 @@ def _index(coords: list, order: int, rank: int) -> int:
     # entangle the positions back
     __coords = entangle(coords, order=order, rank=rank)
     # flatten the coordinate
-    __position = flatten_axes(__coords, order=order, rank=rank)
+    __position = densecurves.binary.flatten(__coords, order=order, rank=rank)
     # decode the gray encodings
     return decode_gray(__position)
 
