@@ -3,17 +3,8 @@
 import functools
 
 import densecurves.binary
+import densecurves.gray
 import densecurves.linear
-
-# GRAY CODES ###################################################################
-
-def encode_gray(number: int) -> int:
-    return number ^ (number >> 1)
-
-def decode_gray(number: int) -> int:
-    return functools.reduce(
-        lambda __a, __b: __a ^ __b,
-        [number >> __i for __i in range(len(format(number, 'b')))])
 
 # ENTANGLE #####################################################################
 
@@ -45,7 +36,7 @@ def untangle(coords: list, order: int, rank: int) -> list:
 
 def _point(position: int, order: int, rank: int) -> list:
     # gray encoding H ^ (H/2)
-    __gray = encode_gray(position)
+    __gray = densecurves.gray.encode(position)
     # approximate the curve
     __coords = densecurves.binary.interleave(__gray, order=order, rank=rank)
     # Undo excess work
@@ -71,7 +62,7 @@ def _index(coords: list, order: int, rank: int) -> int:
     # flatten the coordinate
     __position = densecurves.binary.flatten(__coords, order=order, rank=rank)
     # decode the gray encodings
-    return decode_gray(__position)
+    return densecurves.gray.decode(__position)
 
 def index(coords: list, order: int, rank: int, group: int=0) -> int:
     # side of the fine blocks
