@@ -1,3 +1,5 @@
+import functools
+
 # ENCODE #######################################################################
 
 def encode(number: int) -> int:
